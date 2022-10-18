@@ -25,7 +25,7 @@ Arrancar aplicación:
 
 Instalar liberías:
 
-	$ sudo apt-get install build-essential unzip python-dev libaio-dev
+	$ sudo apt-get install build-essential unzip python-dev libaio-dev libaio1
 
 Descargar desde http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html:
 

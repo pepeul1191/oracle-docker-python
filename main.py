@@ -24,9 +24,7 @@ def read():
   stmt = ("""
     SELECT * FROM tipos WHERE id > 0
   """).format()
-  for r in conn.execute(stmt):
-  	print(r)
-  # print(rs)
+  return [dict(r) for r in conn.execute(stmt)]
 
 def insert():
 	conn = engine.connect()
