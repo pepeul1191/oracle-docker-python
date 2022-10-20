@@ -27,29 +27,81 @@ def read():
   return [dict(r) for r in conn.execute(stmt)]
 
 def insert():
-	conn = engine.connect()
-	tipo = 'ULIMA 2'
-	stmt = ("""
-	  INSERT INTO tipos (nombre) 
-	    VALUES ('{}')
-	""").format(tipo)
-	conn.execute(stmt)
+  conn = engine.connect()
+  tipo = 'ULIMA 2'
+  stmt = ("""
+    INSERT INTO tipos (nombre) 
+      VALUES ('{}')
+  """).format(tipo)
+  conn.execute(stmt)
 
 def inserts_pokemones():
-	archivo = open('data/pokemones.txt', 'r')
-	lineas = archivo.readlines()
-	resp = ''
-	for linea in lineas:
-		linea = linea.strip().split(',')
-		numero = linea[0]
-		nombre = linea[1]
-		peso = linea[4]
-		talla = linea[5]
-		imagen = linea[6]
-		stmt = ("INSERT INTO pokemones (nombre,numero,peso,talla,imagen) VALUES ('{}',{},{},{},'{}');\n").format(nombre, numero, peso, talla, imagen)
-		resp = resp + stmt
-	
-	with open('tmp/pokemones.txt', 'w') as f:
-		f.write(resp.strip())
+  archivo = open('data/pokemones.txt', 'r')
+  lineas = archivo.readlines()
+  resp = ''
+  for linea in lineas:
+    linea = linea.strip().split(',')
+    numero = int(linea[0])
+    nombre = linea[1]
+    peso = linea[4]
+    talla = linea[5]
+    imagen = linea[6]
+    generacion_id = 0
+    if numero >= 1 and numero <= 151:
+      generacion_id = 1
+    elif numero >= 152 and numero <= 251:
+      generacion_id = 2
+    elif numero >= 252 and numero <= 386:
+      generacion_id = 3
+    elif numero >= 387 and numero <= 493:
+      generacion_id = 4
+    elif numero >= 494 and numero <= 649:
+      generacion_id = 5
+    elif numero >= 650 and numero <= 721:
+      generacion_id = 6
+    else:
+      generacion_id = 7
+    stmt = ("INSERT INTO pokemones (nombre,numero,peso,talla,imagen,generacion_id) VALUES ('{}',{},{},{},'{}',{});\n").format(nombre, numero, peso, talla, imagen,generacion_id)
+    resp = resp + stmt
+  with open('tmp/pokemones.txt', 'w') as f:
+    f.write(resp.strip())
 
-inserts_pokemones()
+def llenar_tipos_pokemones():
+  archivo = open('data/pokemones.txt', 'r')
+  lineas = archivo.readlines()
+  # tipos de la db
+  tipos = {}
+  conn = engine.connect()
+  stmt = ("""
+    SELECT * FROM tipos
+  """).format()
+  rs = [dict(r) for r in conn.execute(stmt)]
+  for r in rs:
+    key = r['nombre']
+    value = r['id']
+    tipos[key.upper()] = value
+  resp = ''
+  n = 0
+  # llenar asociativa
+  for linea in lineas:
+    if n < 771:
+      linea = linea.strip().split(',')
+      numero = linea[0]
+      tipo1_id = tipos[linea[2].upper()]
+      tipo2_id = tipos[linea[3].upper()]
+      # concoer el id del pokemon con su numero
+      stmt = ("SELECT id FROM pokemones WHERE numero={}").format(numero)
+      pokemon = conn.execute(stmt).fetchone()
+      pokemon_id = pokemon[0]
+      # insertar en la asociativa
+      stmt1 = ("INSERT INTO pokemones_tipos (pokemon_id,tipo_id) VALUES ({},{})").format(pokemon_id, tipo1_id)
+      #conn.execute(stmt1)
+      stmt2 = ("INSERT INTO pokemones_tipos (pokemon_id,tipo_id) VALUES ({},{})").format(pokemon_id, tipo2_id)
+      #conn.execute(stmt2)
+      # crear .sql
+      resp = resp + stmt1 + ';\n' + stmt2 + ';\n'
+      n = n + 1
+  with open('tmp/pokemones_tipos.txt', 'w') as f:
+    f.write(resp.strip())
+
+llenar_tipos_pokemones()

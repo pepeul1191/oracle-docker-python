@@ -1,3 +1,4 @@
+-- up
 INSERT ALL
     INTO tipos(nombre) VALUES ('PLANTA')
     INTO tipos(nombre) VALUES ('VENENO')
@@ -19,3 +20,8 @@ INSERT ALL
     INTO tipos(nombre) VALUES ('DRAGÓN')
     INTO tipos(nombre) VALUES ('SINIESTRO')
 SELECT * FROM dual;
+
+-- down
+
+TRUNCATE TABLE tipos;
+ALTER SEQUENCE tipos LAST_NUMBER 1;

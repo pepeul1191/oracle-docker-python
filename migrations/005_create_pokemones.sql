@@ -1,14 +1,15 @@
 CREATE TABLE pokemones(
-  ID NUMBER(7) PRIMARY KEY,
-  NOMBRE VARCHAR2(20) NOT NULL,
-    NUMERO NUMBER(3) NOT NULL,
-    PESO FLOAT NOT NULL,
-    TALLA FLOAT NOT NULL,
-    IMAGEN VARCHAR(85)
+  id NUMBER(7) PRIMARY KEY,
+  nombre VARCHAR2(20) NOT NULL,
+  numero NUMBER(3) NOT NULL,
+  peso FLOAT NOT NULL,
+  talla FLOAT NOT NULL,
+  imagen VARCHAR(85),
+  generacion_id NUMBER(2) not null
 );
 
 ALTER TABLE pokemones ADD (
-  CONSTRAINT pokemones_pk PRIMARY KEY (ID));
+  CONSTRAINT pokemones_pk PRIMARY KEY (id));
 
 CREATE SEQUENCE pokemones_seq START WITH 1;
 
