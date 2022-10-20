@@ -35,4 +35,21 @@ def insert():
 	""").format(tipo)
 	conn.execute(stmt)
 
-read()
+def inserts_pokemones():
+	archivo = open('data/pokemones.txt', 'r')
+	lineas = archivo.readlines()
+	resp = ''
+	for linea in lineas:
+		linea = linea.strip().split(',')
+		numero = linea[0]
+		nombre = linea[1]
+		peso = linea[4]
+		talla = linea[5]
+		imagen = linea[6]
+		stmt = ("INSERT INTO pokemones (nombre,numero,peso,talla,imagen) VALUES ('{}',{},{},{},'{}');\n").format(nombre, numero, peso, talla, imagen)
+		resp = resp + stmt
+	
+	with open('tmp/pokemones.txt', 'w') as f:
+		f.write(resp.strip())
+
+inserts_pokemones()
